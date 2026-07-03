@@ -407,4 +407,23 @@ body {
 button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+.grades-table th a {
+    color: #1e1b4b;
+    text-decoration: none;
+}
+
+.grades-table th a:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
+
+#addRecordCard {
+    margin-top: 2rem;
+    border-left-color: #7c3aed;
+}
+
+#addRecordCard h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: #1e1b4b;
 }
