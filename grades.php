@@ -1,8 +1,7 @@
 <?php
 session_start();
 
-// ===== Auth Guard =====
-if (!isset($_SESSION["user"])) {
+if (!isset($_SESSION["user_id"])) {
     header("Location: login.php");
     exit();
 }
@@ -136,7 +135,7 @@ function sortLink($column, $label, $currentSort, $currentOrder, $searchQuery) {
     <div class="navbar">
         <h2>Student Grade Management System</h2>
         <div class="nav-links">
-            <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION["user"]); ?></span>
+            <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION["username"]); ?></span>
             <a href="logout.php" class="btn-logout">Logout</a>
         </div>
     </div>

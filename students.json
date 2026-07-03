@@ -22,13 +22,5 @@
         "prelim": 95,
         "midterm": 99,
         "final": 98
-    },
-    {
-        "id": 4,
-        "name": "Angel Mae Cortino",
-        "section": "BSIT-BA",
-        "prelim": 95,
-        "midterm": 97,
-        "final": 96
     }
 ]

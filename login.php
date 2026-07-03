@@ -32,6 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if ($authenticated) {
+            $_SESSION["user_id"] = $username;
             $_SESSION["username"] = $username;
             $_SESSION['login_attempts'] = 0;
 
