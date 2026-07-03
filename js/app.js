@@ -45,9 +45,30 @@ function renderSummaryCards() {
     if (!container) return; 
 
     const summaryData = [
-        { icon: '👨‍🎓', label: 'Total Students', value: 0 },
-        { icon: '📚', label: 'Subjects', value: 0 },
-        { icon: '⏳', label: 'Pending Grades', value: 0 }
+        {
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"></path>
+                        <path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"></path>
+                    </svg>`,
+            label: 'Total Students',
+            value: 0
+        },
+        {
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>`,
+            label: 'Subjects',
+            value: 0
+        },
+        {
+            icon: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>`,
+            label: 'Pending Grades',
+            value: 0
+        }
     ];
 
     container.innerHTML = summaryData.map(item => `
