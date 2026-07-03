@@ -300,3 +300,19 @@ body {
 .error {
     color: red;
 }
+
+.login-icon {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+.login-container {
+    /* text-align: center; */
+    margin-bottom: 1.5rem;
+}
+
+.subtitle, .loginText {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
