@@ -68,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <path d="M6 12v5c0 1.5 2.5 3 6 3s6-1.5 6-3v-5"></path>
             </svg>
         </div>
-        <h2 class="loginText">Login</h2>
+        <h2 class="loginText">Welcome back!</h2>
         <p class="subtitle">Sign in to access your dashboard</p>
 
         <?php if ($error != "") { ?>
