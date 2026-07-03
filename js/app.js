@@ -4,6 +4,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.querySelector('.login-form');
     if (!loginForm) return;
 
+    loginForm.addEventListener('submit', (e) => {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorEl = document.getElementById('clientError');
+
+        if (username === '' || password === '') {
+            e.preventDefault();
+            errorEl.textContent = 'Please fill in both fields.';
+            errorEl.style.display = 'block';
+        }
+    });
+
     const togglePassword = document.getElementById('togglePassword');
     if (togglePassword) {
         togglePassword.addEventListener('click', () => {
@@ -16,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function renderSummaryCards() {
     const container = document.getElementById('summaryCards');
-    if (!container) return; // not on dashboard page
+    if (!container) return; 
 
     const summaryData = [
         { icon: '👨‍🎓', label: 'Total Students', value: 0 },
