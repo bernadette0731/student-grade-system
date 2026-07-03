@@ -51,16 +51,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <p class="error"><?php echo $error; ?></p>
         <?php } ?>
 
-        <form method="POST" action="login.php">
+        <form method="POST" action="login.php" class="login-form">
             <div>
                 <label>Username</label>
-                <input type="text" name="username">
+                <input type="text" name="username" id="username">
             </div>
             <div>
                 <label>Password</label>
-                <input type="password" name="password">
+                <input type="password" name="password" id="password">
             </div>
-            <button type="submit">Login</button>
+            <button type="submit" id="loginBtn">Login</button>
         </form>
 
     </div>
