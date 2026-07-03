@@ -1,10 +1,48 @@
 document.addEventListener('DOMContentLoaded', () => {
     renderSummaryCards();
+
+    const loginForm = document.querySelector('.login-form');
+    if (!loginForm) return;
+
+    loginForm.addEventListener('submit', (e) => {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorEl = document.getElementById('clientError');
+        const loginBtn = document.getElementById('loginBtn');
+
+        if (username === '' || password === '') {
+            e.preventDefault();
+            errorEl.textContent = 'Please fill in both fields.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+    });
+
+    // Reset button state on page load (covers failed-login reloads, back button)
+    window.addEventListener('pageshow', () => {
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
+        }
+    });
+
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', () => {
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            togglePassword.style.opacity = passwordInput.type === 'text' ? '0.6' : '1';
+        });
+    }
 });
 
 function renderSummaryCards() {
     const container = document.getElementById('summaryCards');
-    if (!container) return; // not on dashboard page
+    if (!container) return; 
 
     const summaryData = [
         { icon: '👨‍🎓', label: 'Total Students', value: 0 },
