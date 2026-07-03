@@ -39,6 +39,31 @@ $students = array_map(function ($s) {
     return $s;
 }, $students);
 
+$sortBy = $_GET["sort"] ?? "name";
+$order = $_GET["order"] ?? "asc";
+
+usort($students, function ($a, $b) use ($sortBy, $order) {
+    $valA = $a[$sortBy] ?? "";
+    $valB = $b[$sortBy] ?? "";
+
+    if (is_numeric($valA) && is_numeric($valB)) {
+        $cmp = $valA <=> $valB;
+    } else {
+        $cmp = strcasecmp($valA, $valB);
+    }
+
+    return $order === "desc" ? -$cmp : $cmp;
+});
+
+function sortLink($column, $label, $currentSort, $currentOrder) {
+    $nextOrder = ($currentSort === $column && $currentOrder === "asc") ? "desc" : "asc";
+    $arrow = "";
+    if ($currentSort === $column) {
+        $arrow = $currentOrder === "asc" ? " ▲" : " ▼";
+    }
+    return "<a href=\"grades.php?sort={$column}&order={$nextOrder}\">{$label}{$arrow}</a>";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -73,13 +98,13 @@ $students = array_map(function ($s) {
 
             <table class="grades-table">
                 <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Section</th>
-                        <th>Prelim</th>
-                        <th>Midterm</th>
-                        <th>Final</th>
-                        <th>Average</th>
+                   <tr>
+                        <th><?php echo sortLink("name", "Name", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("section", "Section", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("prelim", "Prelim", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("midterm", "Midterm", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("final", "Final", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("average", "Average", $sortBy, $order); ?></th>
                         <th>Letter Grade</th>
                     </tr>
                 </thead>

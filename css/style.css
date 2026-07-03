@@ -300,3 +300,13 @@ body {
 .error {
     color: red;
 }
+
+.grades-table th a {
+    color: #1e1b4b;
+    text-decoration: none;
+}
+
+.grades-table th a:hover {
+    color: #4f46e5;
+    text-decoration: underline;
+}
