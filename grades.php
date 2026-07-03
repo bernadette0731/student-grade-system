@@ -18,7 +18,27 @@ function loadStudents($file) {
     return is_array($data) ? $data : [];
 }
 
+function computeAverage($prelim, $midterm, $final) {
+    return round(($prelim + $midterm + $final) / 3, 2);
+}
+
+function letterGrade($average) {
+    if ($average >= 90) return "A";
+    if ($average >= 85) return "B+";
+    if ($average >= 80) return "B";
+    if ($average >= 75) return "C+";
+    if ($average >= 70) return "C";
+    return "F";
+}
+
 $students = loadStudents($dataFile);
+
+$students = array_map(function ($s) {
+    $s["average"] = computeAverage($s["prelim"], $s["midterm"], $s["final"]);
+    $s["letter"] = letterGrade($s["average"]);
+    return $s;
+}, $students);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -59,6 +79,8 @@ $students = loadStudents($dataFile);
                         <th>Prelim</th>
                         <th>Midterm</th>
                         <th>Final</th>
+                        <th>Average</th>
+                        <th>Letter Grade</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -69,6 +91,8 @@ $students = loadStudents($dataFile);
                             <td><?php echo htmlspecialchars($s["prelim"]); ?></td>
                             <td><?php echo htmlspecialchars($s["midterm"]); ?></td>
                             <td><?php echo htmlspecialchars($s["final"]); ?></td>
+                            <td><?php echo htmlspecialchars($s["average"]); ?></td>
+                            <td><?php echo htmlspecialchars($s["letter"]); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
