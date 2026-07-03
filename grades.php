@@ -8,6 +8,7 @@ if (!isset($_SESSION["user"])) {
 }
 
 $dataFile = "students.json";
+$message = "";
 
 function loadStudents($file) {
     if (!file_exists($file)) {
@@ -16,6 +17,10 @@ function loadStudents($file) {
     $json = file_get_contents($file);
     $data = json_decode($json, true);
     return is_array($data) ? $data : [];
+}
+
+function saveStudents($file, $data) {
+    file_put_contents($file, json_encode($data, JSON_PRETTY_PRINT));
 }
 
 function computeAverage($prelim, $midterm, $final) {
@@ -32,6 +37,48 @@ function letterGrade($average) {
 }
 
 $students = loadStudents($dataFile);
+
+// Add new student record
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "add") {
+    $name = trim($_POST["name"] ?? "");
+    $section = trim($_POST["section"] ?? "");
+    $prelim = floatval($_POST["prelim"] ?? 0);
+    $midterm = floatval($_POST["midterm"] ?? 0);
+    $final = floatval($_POST["final"] ?? 0);
+
+    if ($name !== "" && $section !== "") {
+        $newId = 1;
+        foreach ($students as $s) {
+            if ($s["id"] >= $newId) {
+                $newId = $s["id"] + 1;
+            }
+        }
+
+        $students[] = [
+            "id" => $newId,
+            "name" => $name,
+            "section" => $section,
+            "prelim" => $prelim,
+            "midterm" => $midterm,
+            "final" => $final
+        ];
+
+        saveStudents($dataFile, $students);
+        $message = "Student record added successfully.";
+    } else {
+        $message = "Name and section are required.";
+    }
+}
+
+// Delete student record
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "delete") {
+    $deleteId = intval($_POST["id"] ?? 0);
+    $students = array_values(array_filter($students, function ($s) use ($deleteId) {
+        return $s["id"] != $deleteId;
+    }));
+    saveStudents($dataFile, $students);
+    $message = "Student record deleted.";
+}
 
 $searchQuery = trim($_GET["q"] ?? "");
 
@@ -105,8 +152,12 @@ function sortLink($column, $label, $currentSort, $currentOrder, $searchQuery) {
         <div class="main-content">
             <div class="page-header">
                 <h1>Grade Management</h1>
-                <p class="subtitle">View student grade records.</p>
+                <p class="subtitle">View, search, sort, and manage student grade records.</p>
             </div>
+
+            <?php if ($message !== ""): ?>
+                <p class="error-message"><?php echo htmlspecialchars($message); ?></p>
+            <?php endif; ?>
 
             <form method="GET" action="grades.php" class="grade-form">
                 <input type="text" name="q" placeholder="Search by name or section..." value="<?php echo htmlspecialchars($searchQuery); ?>">
@@ -126,6 +177,7 @@ function sortLink($column, $label, $currentSort, $currentOrder, $searchQuery) {
                         <th><?php echo sortLink("final", "Final", $sortBy, $order, $searchQuery); ?></th>
                         <th><?php echo sortLink("average", "Average", $sortBy, $order, $searchQuery); ?></th>
                         <th>Letter Grade</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,10 +190,30 @@ function sortLink($column, $label, $currentSort, $currentOrder, $searchQuery) {
                             <td><?php echo htmlspecialchars($s["final"]); ?></td>
                             <td><?php echo htmlspecialchars($s["average"]); ?></td>
                             <td><?php echo htmlspecialchars($s["letter"]); ?></td>
+                            <td>
+                                <form method="POST" action="grades.php" onsubmit="return confirm('Delete this record?');" style="display:inline;">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="id" value="<?php echo intval($s["id"]); ?>">
+                                    <button type="submit" class="btn-logout">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
+
+              <div class="card" id="addRecordCard">
+                <h3>Add New Grade Record</h3>
+                <form method="POST" action="grades.php" class="grade-form">
+                    <input type="hidden" name="action" value="add">
+                    <input type="text" name="name" placeholder="Student Name" required>
+                    <input type="text" name="section" placeholder="Section" required>
+                    <input type="number" step="0.01" name="prelim" placeholder="Prelim" min="0" max="100" required>
+                    <input type="number" step="0.01" name="midterm" placeholder="Midterm" min="0" max="100" required>
+                    <input type="number" step="0.01" name="final" placeholder="Final" min="0" max="100" required>
+                    <button type="submit" class="btn-primary">Add Student</button>
+                </form>
+            </div>
 
         </div>
     </div>
