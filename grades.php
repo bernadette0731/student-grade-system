@@ -33,6 +33,16 @@ function letterGrade($average) {
 
 $students = loadStudents($dataFile);
 
+$searchQuery = trim($_GET["q"] ?? "");
+
+if ($searchQuery !== "") {
+    $students = array_filter($students, function ($s) use ($searchQuery) {
+        return stripos($s["name"], $searchQuery) !== false
+            || stripos($s["section"], $searchQuery) !== false;
+    });
+}
+
+
 $students = array_map(function ($s) {
     $s["average"] = computeAverage($s["prelim"], $s["midterm"], $s["final"]);
     $s["letter"] = letterGrade($s["average"]);
@@ -55,14 +65,16 @@ usort($students, function ($a, $b) use ($sortBy, $order) {
     return $order === "desc" ? -$cmp : $cmp;
 });
 
-function sortLink($column, $label, $currentSort, $currentOrder) {
+function sortLink($column, $label, $currentSort, $currentOrder, $searchQuery) {
     $nextOrder = ($currentSort === $column && $currentOrder === "asc") ? "desc" : "asc";
     $arrow = "";
     if ($currentSort === $column) {
         $arrow = $currentOrder === "asc" ? " ▲" : " ▼";
     }
-    return "<a href=\"grades.php?sort={$column}&order={$nextOrder}\">{$label}{$arrow}</a>";
+    $q = urlencode($searchQuery);
+    return "<a href=\"grades.php?sort={$column}&order={$nextOrder}&q={$q}\">{$label}{$arrow}</a>";
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -96,15 +108,23 @@ function sortLink($column, $label, $currentSort, $currentOrder) {
                 <p class="subtitle">View student grade records.</p>
             </div>
 
+            <form method="GET" action="grades.php" class="grade-form">
+                <input type="text" name="q" placeholder="Search by name or section..." value="<?php echo htmlspecialchars($searchQuery); ?>">
+                <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sortBy); ?>">
+                <input type="hidden" name="order" value="<?php echo htmlspecialchars($order); ?>">
+                <button type="submit" class="btn-primary">Search</button>
+            </form>
+
+
             <table class="grades-table">
                 <thead>
                    <tr>
-                        <th><?php echo sortLink("name", "Name", $sortBy, $order); ?></th>
-                        <th><?php echo sortLink("section", "Section", $sortBy, $order); ?></th>
-                        <th><?php echo sortLink("prelim", "Prelim", $sortBy, $order); ?></th>
-                        <th><?php echo sortLink("midterm", "Midterm", $sortBy, $order); ?></th>
-                        <th><?php echo sortLink("final", "Final", $sortBy, $order); ?></th>
-                        <th><?php echo sortLink("average", "Average", $sortBy, $order); ?></th>
+                        <th><?php echo sortLink("name", "Name", $sortBy, $order, $searchQuery); ?></th>
+                        <th><?php echo sortLink("section", "Section", $sortBy, $order, $searchQuery); ?></th>
+                        <th><?php echo sortLink("prelim", "Prelim", $sortBy, $order, $searchQuery); ?></th>
+                        <th><?php echo sortLink("midterm", "Midterm", $sortBy, $order, $searchQuery); ?></th>
+                        <th><?php echo sortLink("final", "Final", $sortBy, $order, $searchQuery); ?></th>
+                        <th><?php echo sortLink("average", "Average", $sortBy, $order, $searchQuery); ?></th>
                         <th>Letter Grade</th>
                     </tr>
                 </thead>
