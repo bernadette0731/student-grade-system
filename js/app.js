@@ -1,5 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     renderSummaryCards();
+
+    const loginForm = document.querySelector('.login-form');
+    if (!loginForm) return;
+
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', () => {
+            const passwordInput = document.getElementById('password');
+            passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+            togglePassword.style.opacity = passwordInput.type === 'text' ? '0.6' : '1';
+        });
+    }
 });
 
 function renderSummaryCards() {
