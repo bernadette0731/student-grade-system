@@ -407,6 +407,8 @@ body {
 button:disabled {
     opacity: 0.7;
     cursor: not-allowed;
+} 
+
 .grades-table th a {
     color: #1e1b4b;
     text-decoration: none;
