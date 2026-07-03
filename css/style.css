@@ -290,3 +290,13 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
+
+/* login.php base styles */
+.login-container {
+    max-width: 300px;
+    margin: 50px auto;
+}
+
+.error {
+    color: red;
+}
