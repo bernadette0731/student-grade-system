@@ -8,11 +8,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
         const errorEl = document.getElementById('clientError');
+        const loginBtn = document.getElementById('loginBtn');
 
         if (username === '' || password === '') {
             e.preventDefault();
             errorEl.textContent = 'Please fill in both fields.';
             errorEl.style.display = 'block';
+            return;
+        }
+
+        loginBtn.disabled = true;
+        loginBtn.textContent = 'Logging in...';
+    });
+
+    // Reset button state on page load (covers failed-login reloads, back button)
+    window.addEventListener('pageshow', () => {
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Login';
         }
     });
 

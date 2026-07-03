@@ -2,29 +2,52 @@
 session_start();
 
 $error = "";
+$maxAttempts = 3;
+
+if (!isset($_SESSION['login_attempts'])) {
+    $_SESSION['login_attempts'] = 0;
+}
+
+// Prefill username if "remember me" cookie exists
+$rememberedUser = $_COOKIE['remembered_user'] ?? '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    $username = htmlspecialchars(trim($_POST["username"]));
+    $password = htmlspecialchars(trim($_POST["password"]));
+    $remember = isset($_POST['remember']);
 
-    $usersJson = file_get_contents("users.json");
-    $users = json_decode($usersJson, true);
-
-    $authenticated = false;
-
-    foreach ($users as $user) {
-        if ($user["username"] == $username && $user["password"] == $password) {
-            $authenticated = true;
-            break;
-        }
-    }
-
-    if ($authenticated) {
-        $_SESSION["username"] = $username;
-        header("Location: dashboard.php");
-        exit();
+    if ($_SESSION['login_attempts'] >= $maxAttempts) {
+        $error = "Too many failed attempts. Please try again later.";
     } else {
-        $error = "Invalid username or password.";
+        $usersJson = file_get_contents("users.json");
+        $users = json_decode($usersJson, true);
+
+        $authenticated = false;
+
+        foreach ($users as $user) {
+            if ($user["username"] == $username && $user["password"] == $password) {
+                $authenticated = true;
+                break;
+            }
+        }
+
+        if ($authenticated) {
+            $_SESSION["username"] = $username;
+            $_SESSION['login_attempts'] = 0;
+
+            if ($remember) {
+                setcookie("remembered_user", $username, time() + (86400 * 30), "/"); // 30 days
+            } else {
+                setcookie("remembered_user", "", time() - 3600, "/"); // clear if unchecked
+            }
+
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $_SESSION['login_attempts']++;
+            $remaining = $maxAttempts - $_SESSION['login_attempts'];
+            $error = "Invalid username or password. $remaining attempt(s) remaining.";
+        }
     }
 }
 ?>
@@ -54,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <form method="POST" action="login.php" class="login-form">
             <div>
                 <label>Username</label>
-                <input type="text" name="username" id="username" required>
+                <input type="text" name="username" id="username" required value="<?php echo htmlspecialchars($rememberedUser); ?>">
             </div>
             <div>
                 <label>Password</label>
@@ -69,6 +92,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
             </div>
             <span class="error" id="clientError" style="display:none;"></span>
+
+            <label class="remember-me">
+                <input type="checkbox" name="remember" id="remember" <?php echo $rememberedUser ? 'checked' : ''; ?>>
+                Remember me
+            </label>
+
             <button type="submit" id="loginBtn">Login</button>
         </form>
 
